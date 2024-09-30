@@ -11,14 +11,14 @@ main(int argc, char *argv[])
   char buffer[2];
 
   if (pipe(pipeP) == -1 || pipe(pipeC) == -1) {
-    fprintf(2, "Pipe error\n");
+    printf("Pipe error\n");
     exit(1);
   }
 
   pid = fork();
 
   if (pid == -1) {
-    fprintf(2, "Fork error\n");
+    printf("Fork error\n");
     exit(1);
   }
 
@@ -33,7 +33,7 @@ main(int argc, char *argv[])
 
     read(pipeC[0], buffer, 2);
     if (buffer == "y\0") {
-        fprintf(1, "<%d>: recieved pong\n", pid);
+        printf("<%d>: recieved pong\n", pid);
     }
     close(pipeC[0]);
   } else { // Child
@@ -44,7 +44,7 @@ main(int argc, char *argv[])
 
     read(pipeP[0], buffer, 2);
     if (buffer == "x\0") {
-        fprintf(1, "<%d>: recieved ping\n", pid);
+        printf("<%d>: recieved ping\n", pid);
     }
     close(pipeP[0]);
 

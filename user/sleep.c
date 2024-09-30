@@ -6,10 +6,10 @@ int
 main(int argc, char *argv[])
 {
   if (argc > 2 || argc < 2) {
-    fprintf(2, "usage: sleep seconds\n");
+    printf("usage: sleep seconds\n");
   }
 
-  fprintf(1, "sleeping...\n");
+  printf("sleeping...\n");
   sleep(atoi(argv[1]));
 
   exit(0);

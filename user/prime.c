@@ -3,83 +3,86 @@
 #include "user/user.h"
 
 int
-primes(int num, int parentPipe[2]) {
-  close(parentPipe[1]);
-  fprintf(1, "prime: %d\n");
-  int childPipe[2];
-
-  if (pipe(childPipe) == -1) {
-    fprintf(2, "Pipe error\n");
-    exit(1);
-  }
-
-  int buffer[2];
-  int pid = 0;
-  do {
-    read(parentPipe[0], buffer, sizeof(buffer) + 1);
-    if (buffer[0] % num != 0) {
-      if (forked) {
-        write(childPipe[1], buffer[0], sizeof(buffer[0]) + 1);
-      }
-    }
-  } while (buffer[0] < 100 && buffer[0] != -1)
-  return 0;
-}
-
-int
 main(int argc, char *argv[])
 {
-  int pid = 0;
-  for (int i = 2; i <= 280; i += 1) {
+    int pid;
+    bool main = true;
+    int childPipe[2];
+    int parentPipe[2];
+    int buffer[2];
+    int number = -1;
 
-  }
-
-  int pipeP[2];
-  int pipeC[2];
-  int pid;
-  char buffer[2];
-
-  if (pipe(pipeP) == -1 || pipe(pipeC) == -1) {
-    fprintf(2, "Pipe error\n");
-    exit(1);
-  }
-
-  pid = fork();
-
-  if (pid == -1) {
-    fprintf(2, "Fork error\n");
-    exit(1);
-  }
-
-  if (pid > 0) { // Parent
-    close(pipeP[0]);
-    close(pipeC[1]);
-
-    write(pipeP[1], "x", 2);
-    close(pipeP[1]);
-
-    wait()
-
-    read(pipeC[0], buffer, 2);
-    if (buffer == "y\0") {
-        fprintf(1, "<%d>: recieved pong", pid);
+    if (pipe(childPipe) == -1) {
+        printf("Pipe error\n");
+        exit(1);
     }
-    close(pipeC[0]);
-  } else { // Child
-    close(pipeP[1]);
-    close(pipeC[0]);
 
-    sleep(1);
+    while (true) {
+        if (main) {
+            main = false;
+            pid = fork();
 
-    read(pipeP[0], buffer, 2);
-    if (buffer == "x\0") {
-        fprintf(1, "<%d>: recieved ping", pid);
+            if (pid == -1) {
+                printf("Fork error\n");
+                exit(1);
+            } else if (pid > 0) {
+                main = true;
+                close(childPipe[0]);
+                break;
+            } else {
+                close(childPipe[1]);
+                parentPipe = childPipe;
+            }
+        }
+
+        read(parentPipe[0], buffer, sizeof(number) + 1);
+
+        if (buffer[0] == -1) {
+            if (pid > 0) {
+                write(childPipe[1], number, sizeof(number) + 1);
+                wait();
+                close(childPipe[1]);
+            }
+            close(parentPipe[0]);
+            exit(0);
+        } else if (buffer[0] % number != 0) {
+            if (pid == 0) {
+                if (pipe(childPipe) == -1) {
+                    printf("Pipe error\n");
+                    exit(1);
+                }
+
+                pid = fork();
+
+                if (pid == -1) {
+                    printf("Fork error\n");
+                    exit(1);
+                } else if (pid > 0) {
+                    close(childPipe[0]);
+                    write(childPipe[1], number, sizeof(number) + 1);
+                } else {
+                    close(childPipe[1]);
+                    parentPipe = childPipe;
+                    number = buffer[0];
+                    printf("prime: %d\n", number);
+                }
+            } else {
+                write(childPipe[1], number, sizeof(number) + 1);
+            }
+        }
     }
-    close(pipeP[0]);
 
-    write(pipeC[1], "y", 2);
-    close(pipeC[1]);
-  }
+    if (main) {
+        for (number = 2; number <= 280; number += 1) {
+            write(childPipe[1], number, sizeof(number) + 1);
+        }
+        write(childPipe[1], -1, sizeof(number) + 1);
+        wait();
+    } else {
+        close(parentPipe[0]);
+    }
 
-  exit(0);
+    close(childPipe[1]);
+
+    exit(0);
 }
