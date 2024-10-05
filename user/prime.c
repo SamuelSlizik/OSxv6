@@ -1,6 +1,7 @@
 #include "kernel/types.h"
 #include "kernel/stat.h"
 #include "user/user.h"
+#include "stdbool.h"
 
 int
 main(int argc, char *argv[])
@@ -31,7 +32,8 @@ main(int argc, char *argv[])
                 break;
             } else {
                 close(childPipe[1]);
-                parentPipe = childPipe;
+                parentPipe[0] = childPipe[0];
+                parentPipe[1] = 0;
             }
         }
 
@@ -62,7 +64,8 @@ main(int argc, char *argv[])
                     write(childPipe[1], number, sizeof(number) + 1);
                 } else {
                     close(childPipe[1]);
-                    parentPipe = childPipe;
+                    parentPipe[0] = childPipe[0];
+                    parentPipe[1] = 0;
                     number = buffer[0];
                     printf("prime: %d\n", number);
                 }
