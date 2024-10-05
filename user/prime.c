@@ -41,7 +41,7 @@ main(int argc, char *argv[])
 
         if (buffer[0] == -1) {
             if (pid > 0) {
-                write(childPipe[1], number, sizeof(number) + 1);
+                write(childPipe[1], &number, sizeof(number) + 1);
                 wait();
                 close(childPipe[1]);
             }
@@ -61,7 +61,7 @@ main(int argc, char *argv[])
                     exit(1);
                 } else if (pid > 0) {
                     close(childPipe[0]);
-                    write(childPipe[1], number, sizeof(number) + 1);
+                    write(childPipe[1], &number, sizeof(number) + 1);
                 } else {
                     close(childPipe[1]);
                     parentPipe[0] = childPipe[0];
@@ -70,14 +70,14 @@ main(int argc, char *argv[])
                     printf("prime: %d\n", number);
                 }
             } else {
-                write(childPipe[1], number, sizeof(number) + 1);
+                write(childPipe[1], &number, sizeof(number) + 1);
             }
         }
     }
 
     if (main) {
         for (number = 2; number <= 280; number += 1) {
-            write(childPipe[1], number, sizeof(number) + 1);
+            write(childPipe[1], &number, sizeof(number) + 1);
         }
         write(childPipe[1], -1, sizeof(number) + 1);
         wait();
