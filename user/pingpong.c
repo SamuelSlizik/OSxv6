@@ -23,6 +23,7 @@ main(int argc, char *argv[])
   }
 
   if (pid > 0) { // Parent
+    pid = getpid();
     close(pipeP[0]);
     close(pipeC[1]);
 
@@ -37,6 +38,7 @@ main(int argc, char *argv[])
     }
     close(pipeC[0]);
   } else { // Child
+    pid = getpid();
     close(pipeP[1]);
     close(pipeC[0]);
 
