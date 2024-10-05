@@ -42,7 +42,7 @@ main(int argc, char *argv[])
         if (buffer[0] == -1) {
             if (pid > 0) {
                 write(childPipe[1], &number, sizeof(number) + 1);
-                wait();
+                wait(NULL);
                 close(childPipe[1]);
             }
             close(parentPipe[0]);
@@ -79,8 +79,9 @@ main(int argc, char *argv[])
         for (number = 2; number <= 280; number += 1) {
             write(childPipe[1], &number, sizeof(number) + 1);
         }
-        write(childPipe[1], -1, sizeof(number) + 1);
-        wait();
+        number = -1;
+        write(childPipe[1], &number, sizeof(number) + 1);
+        wait(NULL);
     } else {
         close(parentPipe[0]);
     }
