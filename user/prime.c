@@ -39,7 +39,7 @@ main(int argc, char *argv[])
         }
 
         read(parentPipe[0], &buffer, sizeof(number));
-        printf("buffer number is %d\n", number);
+        printf("buffer number is %d\n", buffer[0]);
 
         if (buffer[0] == -1) {
             printf("about to stop\n");
@@ -86,6 +86,7 @@ main(int argc, char *argv[])
             printf("wrote %d\n", number);
         }
         number = -1;
+        printf("wrote %d\n", number);
         write(childPipe[1], &number, sizeof(number));
         wait(NULL);
     } else {
