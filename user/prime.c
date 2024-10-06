@@ -34,6 +34,7 @@ main(int argc, char *argv[])
             } else {
                 close(childPipe[1]);
                 parentPipe[0] = childPipe[0];
+                childPipe[0] = 0;
                 parentPipe[1] = 0;
             }
         }
@@ -68,7 +69,9 @@ main(int argc, char *argv[])
                     write(childPipe[1], &buffer, sizeof(number));
                 } else {
                     close(childPipe[1]);
+                    close(parentPipe[0]);
                     parentPipe[0] = childPipe[0];
+                    childPipe[0] = 0;
                     parentPipe[1] = 0;
                     number = -1;
                 }
