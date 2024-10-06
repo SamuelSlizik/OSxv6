@@ -79,7 +79,7 @@ main(int argc, char *argv[])
     }
 
     if (main) {
-        for (number = 2; number <= 20; number += 1) {
+        for (number = 2; number <= 280; number += 1) {
             write(childPipe[1], &number, sizeof(number));
             sleep(1);
         }
