@@ -50,6 +50,8 @@ main(int argc, char *argv[])
             }
             close(parentPipe[0]);
             exit(0);
+        } else if (number == -1) {
+            number = buffer[0];
         } else if (buffer[0] % number != 0) {
             printf("not divisible\n");
             if (pid == 0) {
@@ -80,9 +82,9 @@ main(int argc, char *argv[])
     }
 
     if (main) {
-        for (number = 2; number <= 10; number += 1) {
+        for (number = 2; number <= 20; number += 1) {
             write(childPipe[1], &number, sizeof(number));
-            sleep(5);
+            sleep(1);
             printf("wrote %d\n", number);
         }
         number = -1;
