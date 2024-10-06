@@ -82,6 +82,7 @@ main(int argc, char *argv[])
     if (main) {
         for (number = 2; number <= 10; number += 1) {
             write(childPipe[1], &number, sizeof(number));
+            sleep(5);
             printf("wrote %d\n", number);
         }
         number = -1;
